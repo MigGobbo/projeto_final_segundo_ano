@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="../css/index.css" />
+  </head>
+
+  <body>
+    <h1>CADASTRO</h1>
+    <form id="cadastrar-se">
+      <input type="text" name="username" placeholder="nome de usuário" />
+      <input type="password" name="password" placeholder="senha" />
+
+      <button>cadastrar-se</button>
+    </form>
+    <a href="/login">Já tem conta? Faça login</a>
+    <script>
+      const frmUser = document.querySelector("#cadastrar-se");
+
+      frmUser.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        const response = await fetch("/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: frmUser.username.value,
+            password: frmUser.password.value,
+          }),
+        });
+
+        if (response.ok) {
+          window.location.assign("/login");
+          return;
+        }
+
+        alert(
+          response.status === 409
+            ? "Esse usuário já está cadastrado. Faça login ou use outro usuário."
+            : "Não foi possível criar a conta. Verifique os dados e tente novamente.",
+        );
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fluxo</title>
+    <link rel="stylesheet" href="../css/home.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>Fluxo</h1>
+        <div class="profile">
+          <div class="thumb" aria-hidden="true"></div>
+          <div class="username"></div>
+        </div>
+      </header>
+
+      <section class="forum" aria-labelledby="titulo-forum">
+        <div class="forum-heading">
+          <div>
+            <p class="eyebrow">Comunidade</p>
+            <h2 id="titulo-forum">Fórum</h2>
+          </div>
+          <a class="forum-link" href="/forum">Abrir fórum completo</a>
+        </div>
+
+        <form id="novo-topico" class="topic-form">
+          <h3>Criar tópico</h3>
+          <label for="titulo">Título</label>
+          <input
+            id="titulo"
+            type="text"
+            name="titulo"
+            placeholder="Digite um título"
+            required
+          />
+
+          <label for="conteudo">Conteúdo</label>
+          <textarea
+            id="conteudo"
+            name="conteudo"
+            placeholder="Compartilhe sua ideia..."
+            required
+          ></textarea>
+
+          <button type="submit">Publicar tópico</button>
+        </form>
+
+        <div class="topics">
+          <h3>Tópicos recentes</h3>
+          <p id="mensagem" class="message"></p>
+          <ul id="topicos"></ul>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const profileName = document.querySelector(".profile .username");
+      const frmTopico = document.querySelector("#novo-topico");
+      const listaTopicos = document.querySelector("#topicos");
+      const mensagem = document.querySelector("#mensagem");
+
+      function formatarData(data) {
+        return new Date(data.replace(" ", "T") + "Z").toLocaleString("pt-BR");
+      }
+
+      async function init() {
+        const response = await fetch("/login/user");
+        if (!response.ok) {
+          alert("Usuário não logado");
+          window.location.href = "/";
+          return;
+        }
+        const data = await response.json();
+        profileName.textContent = data.username;
+      }
+
+      async function carregarTopicos() {
+        const response = await fetch("/api/topicos");
+        if (!response.ok) {
+          mensagem.textContent = "Não foi possível carregar os tópicos.";
+          return;
+        }
+
+        const topicos = await response.json();
+        listaTopicos.replaceChildren();
+
+        if (topicos.length === 0) {
+          mensagem.textContent = "Ainda não há tópicos.";
+          return;
+        }
+
+        mensagem.textContent = "";
+        topicos.forEach((topico) => {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `/forum/${topico.id}`;
+          link.textContent = topico.titulo;
+
+          const detalhes = document.createElement("p");
+          detalhes.textContent = `Por ${topico.autor} em ${formatarData(topico.criado_em)} - ${topico.quantidade_respostas} resposta(s)`;
+
+          item.append(link, detalhes);
+          listaTopicos.append(item);
+        });
+      }
+
+      frmTopico.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        mensagem.textContent = "";
+
+        const response = await fetch("/api/topicos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            titulo: frmTopico.titulo.value,
+            conteudo: frmTopico.conteudo.value,
+          }),
+        });
+
+        if (response.status === 401) {
+          mensagem.textContent = "Entre na sua conta para criar um tópico.";
+          return;
+        }
+        if (!response.ok) {
+          mensagem.textContent = "Não foi possível criar o tópico.";
+          return;
+        }
+
+        const data = await response.json();
+        window.location.href = `/forum/${data.id}`;
+      });
+
+      init();
+      carregarTopicos();
+    </script>
+  </body>
+</html>

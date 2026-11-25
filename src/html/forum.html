@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fórum</title>
+    <link rel="stylesheet" href="../css/forum.css" />
+  </head>
+  <body>
+    <h1>Fórum</h1>
+    <p><a href="/home">Voltar para o início</a></p>
+
+    <h2>Criar tópico</h2>
+    <form id="novo-topico">
+      <p><label for="titulo">Título</label></p>
+      <input id="titulo" type="text" name="titulo" required />
+      <p><label for="conteudo">Conteúdo</label></p>
+      <textarea id="conteudo" name="conteudo" required></textarea>
+      <p><button type="submit">Publicar tópico</button></p>
+    </form>
+
+    <h2>Tópicos</h2>
+    <p id="mensagem"></p>
+    <ul id="topicos"></ul>
+
+    <script>
+      const frmTopico = document.querySelector("#novo-topico");
+      const listaTopicos = document.querySelector("#topicos");
+      const mensagem = document.querySelector("#mensagem");
+
+      function formatarData(data) {
+        return new Date(data.replace(" ", "T") + "Z").toLocaleString("pt-BR");
+      }
+
+      async function carregarTopicos() {
+        const response = await fetch("/api/topicos");
+        if (!response.ok) {
+          mensagem.textContent = "Não foi possível carregar os tópicos.";
+          return;
+        }
+
+        const topicos = await response.json();
+        listaTopicos.replaceChildren();
+        if (topicos.length === 0)
+          mensagem.textContent = "Ainda não há tópicos.";
+        else mensagem.textContent = "";
+
+        topicos.forEach((topico) => {
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = `/forum/${topico.id}`;
+          link.textContent = topico.titulo;
+
+          const detalhes = document.createElement("p");
+          detalhes.textContent = `Por ${topico.autor} em ${formatarData(topico.criado_em)} - ${topico.quantidade_respostas} resposta(s)`;
+
+          item.append(link, detalhes);
+          listaTopicos.append(item);
+        });
+      }
+
+      frmTopico.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        mensagem.textContent = "";
+
+        const response = await fetch("/api/topicos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            titulo: frmTopico.titulo.value,
+            conteudo: frmTopico.conteudo.value,
+          }),
+        });
+
+        if (response.status === 401) {
+          mensagem.textContent = "Entre na sua conta para criar um tópico.";
+          return;
+        }
+        if (!response.ok) {
+          mensagem.textContent = "Não foi possível criar o tópico.";
+          return;
+        }
+
+        const data = await response.json();
+        window.location.href = `/forum/${data.id}`;
+      });
+
+      carregarTopicos();
+    </script>
+  </body>
+</html>

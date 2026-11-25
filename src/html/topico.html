@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tópico do fórum</title>
+    <link rel="stylesheet" href="../css/topico.css" />
+  </head>
+  <body>
+    <p><a href="/forum">Voltar para o fórum</a></p>
+    <h1 id="titulo"></h1>
+    <p id="autor"></p>
+    <p id="conteudo"></p>
+
+    <h2>Respostas</h2>
+    <p id="mensagem"></p>
+    <ul id="respostas"></ul>
+
+    <h2>Adicionar resposta</h2>
+    <form id="nova-resposta">
+      <textarea name="conteudo" required></textarea>
+      <p><button type="submit">Enviar resposta</button></p>
+    </form>
+
+    <script>
+      const idTopico = window.location.pathname.split("/").pop();
+      const frmResposta = document.querySelector("#nova-resposta");
+      const listaRespostas = document.querySelector("#respostas");
+      const mensagem = document.querySelector("#mensagem");
+
+      function formatarData(data) {
+        return new Date(data.replace(" ", "T") + "Z").toLocaleString("pt-BR");
+      }
+
+      async function carregarTopico() {
+        const response = await fetch(`/api/topicos/${idTopico}`);
+        if (response.status === 404) {
+          document.querySelector("#titulo").textContent =
+            "Tópico não encontrado";
+          frmResposta.hidden = true;
+          return;
+        }
+        if (!response.ok) {
+          mensagem.textContent = "Não foi possível carregar o tópico.";
+          return;
+        }
+
+        const data = await response.json();
+        document.title = data.topico.titulo;
+        document.querySelector("#titulo").textContent = data.topico.titulo;
+        document.querySelector("#autor").textContent =
+          `Por ${data.topico.autor} em ${formatarData(data.topico.criado_em)}`;
+        document.querySelector("#conteudo").textContent = data.topico.conteudo;
+
+        listaRespostas.replaceChildren();
+        if (data.respostas.length === 0)
+          mensagem.textContent = "Ainda não há respostas.";
+        else mensagem.textContent = "";
+
+        data.respostas.forEach((resposta) => {
+          const item = document.createElement("li");
+          const conteudo = document.createElement("p");
+          conteudo.textContent = resposta.conteudo;
+
+          const detalhes = document.createElement("p");
+          detalhes.textContent = `Por ${resposta.autor} em ${formatarData(resposta.criado_em)}`;
+
+          item.append(conteudo, detalhes);
+          listaRespostas.append(item);
+        });
+      }
+
+      frmResposta.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        mensagem.textContent = "";
+
+        const response = await fetch(`/api/topicos/${idTopico}/respostas`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ conteudo: frmResposta.conteudo.value }),
+        });
+
+        if (response.status === 401) {
+          mensagem.textContent = "Entre na sua conta para responder.";
+          return;
+        }
+        if (!response.ok) {
+          mensagem.textContent = "Não foi possível enviar a resposta.";
+          return;
+        }
+
+        frmResposta.reset();
+        await carregarTopico();
+      });
+
+      carregarTopico();
+    </script>
+  </body>
+</html>

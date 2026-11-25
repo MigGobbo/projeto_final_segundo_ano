@@ -1,0 +1,111 @@
+:root {
+  --ink: #18201d;
+  --muted: #66706c;
+  --paper: #f7f7f2;
+  --surface: #fff;
+  --line: #dfe4df;
+  --green: #176b4d;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  width: min(820px, calc(100% - 40px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 36px 0 56px;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Georgia, serif;
+}
+body > a {
+  display: inline-block;
+  margin-bottom: 18px;
+  color: var(--green);
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 700;
+}
+h1 {
+  margin: 0 0 8px;
+  font-size: 44px;
+}
+h2 {
+  margin: 28px 0 12px;
+}
+#autor,
+#conteudo {
+  margin: 0 0 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: "Trebuchet MS", sans-serif;
+}
+#mensagem {
+  color: var(--muted);
+  font-family: "Trebuchet MS", sans-serif;
+}
+#respostas {
+  margin: 0;
+  padding: 8px 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  list-style: none;
+}
+#respostas li {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 0;
+}
+#respostas li:last-child {
+  border-bottom: 0;
+}
+#respostas p {
+  font-family: "Trebuchet MS", sans-serif;
+}
+#respostas p:last-child {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+#nova-resposta {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  font: inherit;
+}
+textarea:focus {
+  border-color: var(--green);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(23, 107, 77, 0.12);
+}
+button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 6px;
+  padding: 10px 18px;
+  color: #fff;
+  background: var(--green);
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+@media (max-width: 760px) {
+  body {
+    width: calc(100% - 28px);
+    padding-top: 24px;
+  }
+  h1 {
+    font-size: 36px;
+  }
+}

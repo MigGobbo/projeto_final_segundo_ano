@@ -1,0 +1,119 @@
+:root {
+  --ink: #18201d;
+  --muted: #66706c;
+  --paper: #f7f7f2;
+  --surface: #fff;
+  --line: #dfe4df;
+  --green: #176b4d;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  width: min(820px, calc(100% - 40px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 36px 0 56px;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "Trebuchet MS", sans-serif;
+}
+h1,
+h2 {
+  font-family: Georgia, serif;
+}
+h1 {
+  margin: 0 0 8px;
+  font-size: 44px;
+}
+h2 {
+  margin: 28px 0 16px;
+  font-size: 28px;
+}
+p {
+  line-height: 1.6;
+}
+a {
+  color: var(--green);
+  font-weight: 700;
+}
+#novo-topico {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+#novo-topico p {
+  margin: 0;
+}
+label {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+input,
+textarea,
+button {
+  width: 100%;
+  border-radius: 6px;
+  font: inherit;
+}
+input {
+  height: 46px;
+  border: 1px solid var(--line);
+  padding: 0 14px;
+}
+textarea {
+  min-height: 120px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  padding: 12px 14px;
+}
+input:focus,
+textarea:focus {
+  border-color: var(--green);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(23, 107, 77, 0.12);
+}
+button {
+  min-height: 46px;
+  border: 0;
+  color: #fff;
+  background: var(--green);
+  font-weight: 700;
+  cursor: pointer;
+}
+#mensagem {
+  color: var(--muted);
+}
+#topicos {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+#topicos li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 16px;
+  background: var(--surface);
+}
+#topicos a {
+  color: var(--ink);
+  font-size: 18px;
+  text-decoration: none;
+}
+#topicos a:hover {
+  color: var(--green);
+}
+#topicos p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (max-width: 760px) {
+  body {
+    width: calc(100% - 28px);
+    padding-top: 24px;
+  }
+}

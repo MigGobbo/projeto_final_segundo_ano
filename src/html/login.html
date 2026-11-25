@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="../css/login.css" />
+  </head>
+  <body>
+    <h1>LOGIN</h1>
+    <form>
+      <input type="text" name="username" placeholder="nome de usuário" />
+      <input type="password" name="password" placeholder="senha" />
+      <button>entrar</button>
+    </form>
+    <a href="/">Criar uma conta</a>
+
+    <script>
+      const frmLogin = document.querySelector("form");
+
+      frmLogin.addEventListener("submit", async (ev) => {
+        ev.preventDefault();
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: frmLogin.username.value,
+            password: frmLogin.password.value,
+          }),
+        });
+
+        if (response.status == 404) return alert("Usuário não encontrado");
+
+        if (response.status == 401) return alert("Senha incorreta");
+
+        if (response.ok) {
+          window.location.href = "/home";
+          return;
+        }
+
+        alert("Não deveria chegar aqui");
+      });
+    </script>
+  </body>
+</html>
